@@ -39,7 +39,13 @@
 
 ## 安装
 
-### 作为项目级 Skill（推荐）
+### 快速安装（推荐）
+
+```bash
+npx skills add RainLib/full-stack-skill
+```
+
+### 作为项目级 Skill
 
 将本仓库克隆到项目的 `.claude/skills/` 目录下：
 

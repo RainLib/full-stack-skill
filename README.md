@@ -39,7 +39,13 @@ Each phase produces a versioned document in `docs/`, with full state tracking so
 
 ## Installation
 
-### As a project skill (recommended)
+### Quick install (recommended)
+
+```bash
+npx skills add RainLib/full-stack-skill
+```
+
+### As a project skill
 
 Clone into your project's `.claude/skills/` directory:
 
