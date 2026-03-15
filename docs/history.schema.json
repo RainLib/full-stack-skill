@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Workflow history",
-  "description": "全栈工作流迭代与阶段状态历史",
+  "description": "全栈工作流迭代与阶段状态历史（8 阶段）",
   "type": "object",
   "required": ["schema_version", "current_iteration_id", "iterations", "created_at", "last_updated"],
   "properties": {
@@ -16,7 +16,17 @@
           "id": { "type": "string", "description": "迭代 id，如 iter-001" },
           "state": {
             "type": "string",
-            "enum": ["requirements", "technology_selection", "program_design", "unit_testing", "code_development", "done"]
+            "enum": [
+              "requirements",
+              "technology_selection",
+              "technical_review",
+              "program_design",
+              "task_breakdown",
+              "unit_testing",
+              "code_development",
+              "self_verification",
+              "done"
+            ]
           },
           "phases": {
             "type": "object",
@@ -24,9 +34,12 @@
             "properties": {
               "requirements_id": { "type": ["string", "null"] },
               "technology_selection_id": { "type": ["string", "null"] },
+              "technical_review_id": { "type": ["string", "null"] },
               "program_design_id": { "type": ["string", "null"] },
+              "task_breakdown_id": { "type": ["string", "null"] },
               "unit_testing_id": { "type": ["string", "null"] },
-              "code_development_id": { "type": ["string", "null"] }
+              "code_development_id": { "type": ["string", "null"] },
+              "self_verification_id": { "type": ["string", "null"] }
             }
           },
           "created_at": { "type": "string", "format": "date-time" },
