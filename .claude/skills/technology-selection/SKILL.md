@@ -12,6 +12,13 @@ allowed-tools: Read, Write
 - 全栈工作流第 2 阶段：需求分析完成后、技术评审之前。
 - 用户明确说要做技术选型或确定技术栈时。
 
+## 与用户交流（必须）
+
+本阶段在**主对话中执行**，必须与用户交流，不得自行假定或跳过对话直接产出文档。
+
+1. **先问再写**：先向用户确认开发范围（见下方三选一），得到用户**明确答复**后，再根据选择进入对应模板并生成选型清单。
+2. **可选追问**：若需求文档中有多种技术路线（如前端框架偏好、后端语言），可列出 2～3 个选项请用户选择后再写入文档。
+
 ## 第一步：确认开发范围
 
 **必须先问用户**（三选一）：
@@ -28,12 +35,36 @@ allowed-tools: Read, Write
 - **仅前端**：见 [templates/frontend-only.md](templates/frontend-only.md)
 - **仅后端**：见 [templates/backend-only.md](templates/backend-only.md)
 
+## 第二步：逐项确认选型（需与用户对话）
+
+确认开发范围后，**按模板中的各项逐步与用户确认**，而非一次性假定全部选型：
+
+### 涉及前端时，额外需确认：
+
+- **UI 组件库**：Ant Design / MUI / Element Plus / shadcn/ui / 手写 / 无偏好？
+- **图标库**：Lucide / Heroicons / Ant Icons / FontAwesome / 无偏好？
+- **CSS 方案**：Tailwind / CSS Modules / styled-components / 无偏好？
+- **动画需求**：Framer Motion / GSAP / 不需要动画？
+
+### 涉及后端时，额外需确认：
+
+- **API 文档生成**：Swagger/OpenAPI 自动生成 / 手写 / 暂不需要？
+- **日志框架**：SLF4J+Logback / Winston / Zap / 无偏好？
+- **参数校验**：Hibernate Validator / Joi / Zod / Pydantic / 无偏好？
+- **测试框架**：JUnit / pytest / Jest / 无偏好？
+
 ## 执行要点
 
-1. 参考需求文档中的非功能需求（性能、安全、部署）来约束选型。
+1. 参考需求文档中的非功能需求（性能、安全、部署）和 UI/UX 偏好来约束选型。
 2. 版本锁定：明确主要框架/库的版本号或版本范围。
 3. 依赖管理：说明包管理器（npm/yarn/pnpm、Maven/Gradle、pip/poetry 等）。
 4. 开发环境：Node 版本、JDK 版本、Python 版本等。
+5. 测试工具：单测框架、E2E 框架（若需要）。
+
+## 辅助资料
+
+- 完整示例输出：[examples/sample-output.md](examples/sample-output.md) — 展示一份合格选型清单的完整结构
+- 选型参考：[reference.md](reference.md) — 常见全栈组合、框架/组件库/数据库对比、选型决策原则
 
 ## 产出
 

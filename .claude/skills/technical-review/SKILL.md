@@ -28,6 +28,11 @@ agent: Explore
 4. **风险清单**：技术风险、依赖风险、未确认项，每条附建议对策。
 5. **评审结论**：通过 / 有条件通过（列出必须修正项） / 不通过（需重做选型）。
 
+## 辅助资料
+
+- 完整示例输出：[examples/sample-output.md](examples/sample-output.md) — 展示一份合格评审文档的完整结构与深度
+- 评审参考：[reference.md](reference.md) — 评审维度清单、API 设计规范、常见风险类型、结论标准
+
 ## 产出
 
 - 使用 [templates/review-template.md](templates/review-template.md) 产出评审文档，供「程序设计」使用。

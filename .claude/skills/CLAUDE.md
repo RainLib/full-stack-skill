@@ -6,14 +6,16 @@
 
 | 顺序 | 阶段 | Skill | 调用方式 | 说明 |
 |:----:|------|-------|----------|------|
-| 1 | 需求分析 | `requirements-analysis` | inline | 与用户对话，从原型/描述中梳理功能点 |
-| 2 | 技术选型 | `technology-selection` | inline | 询问全栈/前端/后端，选定技术栈 |
+| 1 | 需求分析 | `requirements-analysis` | inline | **与用户对话**，从原型/描述中梳理功能点，模糊处追问 |
+| 2 | 技术选型 | `technology-selection` | inline | **先问用户**全栈/仅前端/仅后端，得到答复后再产出选型清单 |
 | 3 | 技术评审 | `technical-review` | fork/Explore | 评审架构可行性、API 契约、数据模型、风险 |
-| 4 | 程序设计 | `program-design` | inline | 设计模块分层、流程、工程目录 |
+| 4 | 程序设计 | `program-design` | inline | **与用户确认**关键假设与方案取舍后再定稿 |
 | 5 | 任务拆分 | `task-breakdown` | fork/Plan | 将设计拆为可管理的开发单元 |
 | 6 | 单元测试 | `unit-testing` | fork | 按任务单元设计测试用例 |
-| 7 | 代码开发 | `code-development` | inline | 按测试驱动实现代码 |
+| 7 | 代码开发 | `code-development` | inline | **与用户确认**范围/方案变更，按测试驱动实现 |
 | 8 | 自我验证 | `self-verification` | fork/Explore | 运行测试、集成验证、质量自检 |
+
+Inline 阶段（1、2、4、7）均需与用户对话或确认，不得跳过用户直接生成结果。
 
 ## 状态管理
 

@@ -8,6 +8,9 @@
 | 框架 | Spring Boot / Express / Fastify / FastAPI / Gin / ... | | 选一 |
 | API 风格 | REST / GraphQL | | 选一并约定请求/响应格式 |
 | 认证 | JWT / Session / OAuth2 / ... | | |
+| API 文档 | Swagger/OpenAPI / 手写文档 / 无 | | 建议自动生成 |
+| 日志框架 | SLF4J+Logback / Winston / Zap / logging / ... | | |
+| 参数校验 | Hibernate Validator / Joi / Zod / Pydantic / ... | | |
 
 ## 数据与存储
 
@@ -26,11 +29,19 @@
 | Python 版本 | （若 Python） |
 | 包管理器 | Maven / Gradle / npm / pip / poetry |
 
+## 测试
+
+| 项 | 选型 | 说明 |
+|----|------|------|
+| 单元测试 | JUnit / pytest / Jest / ... | |
+| 集成测试 | Testcontainers / 内存数据库 / 无 | 按需 |
+
 ## 部署
 
 - 容器化：Docker / 无
 - CI/CD：GitHub Actions / GitLab CI / 无
 - 部署目标：本地 / 云服务 / ...
+- 监控/健康检查：Actuator / 自定义 /health / 无
 
 ## 接口约定
 
