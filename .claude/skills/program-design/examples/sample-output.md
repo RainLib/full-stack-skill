@@ -108,12 +108,50 @@
 | OrderLog | operator_id | bigint | FK → user.id | |
 | OrderLog | created_at | timestamp | NOT NULL, DEFAULT NOW() | |
 
-### 实体关系
+### ER 图（Mermaid）
 
-- User 1 --- N Order（created_by）
-- Order 1 --- N OrderItem（order_id）
-- Order 1 --- N OrderLog（order_id）
-- User 1 --- N OrderLog（operator_id）
+```mermaid
+erDiagram
+    User ||--o{ Order : creates
+    User ||--o{ OrderLog : operates
+    Order ||--|{ OrderItem : contains
+    Order ||--o{ OrderLog : tracks
+
+    User {
+        bigint id PK
+        varchar email UK
+        varchar password_hash
+        varchar name
+        varchar role
+        varchar avatar_url
+    }
+    Order {
+        bigint id PK
+        varchar order_no UK
+        varchar customer_name
+        varchar customer_contact
+        varchar status
+        decimal total_amount
+        text remark
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    OrderItem {
+        bigint id PK
+        bigint order_id FK
+        varchar product_name
+        integer quantity
+        decimal unit_price
+    }
+    OrderLog {
+        bigint id PK
+        bigint order_id FK
+        varchar action
+        bigint operator_id FK
+        timestamp created_at
+    }
+```
 
 ## 4. API 设计（核心接口）
 
@@ -155,45 +193,135 @@
 - **请求体**：`{ "action": "CONFIRM" }`
 - **状态机**：
 
-```
-PENDING  →  CONFIRM   →  PROCESSING
-PENDING  →  CANCEL    →  CANCELLED
-PROCESSING → COMPLETE →  COMPLETED
-PROCESSING → CANCEL   →  CANCELLED
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING : 创建订单
+    PENDING --> PROCESSING : CONFIRM
+    PENDING --> CANCELLED : CANCEL
+    PROCESSING --> COMPLETED : COMPLETE
+    PROCESSING --> CANCELLED : CANCEL
+    COMPLETED --> [*]
+    CANCELLED --> [*]
 ```
 
-## 5. 关键流程
+## 5. 架构总览图（Mermaid）
+
+```mermaid
+graph TB
+    subgraph Frontend["前端 (React + Ant Design)"]
+        Pages[页面组件]
+        Store[Zustand Store]
+        ApiClient[axios 请求层]
+    end
+    subgraph Backend["后端 (Spring Boot)"]
+        Controller[Controller 层]
+        Service[Service 层]
+        Mapper[MyBatis-Plus Mapper]
+    end
+    subgraph Infra["基础设施"]
+        DB[(PostgreSQL)]
+        Swagger[Swagger UI]
+    end
+
+    Pages --> Store
+    Pages --> ApiClient
+    ApiClient -->|REST API| Controller
+    Controller --> Swagger
+    Controller --> Service
+    Service --> Mapper
+    Mapper --> DB
+```
+
+## 6. 关键流程
 
 ### 流程一：订单创建
 
+#### 流程图
+
+```mermaid
+flowchart TD
+    A[用户填写订单表单] --> B{前端表单校验}
+    B -->|校验失败| C[显示字段级错误提示]
+    C --> A
+    B -->|校验通过| D[POST /api/orders]
+    D --> E{后端参数校验}
+    E -->|校验失败| F[返回 400 + 错误详情]
+    F --> C
+    E -->|校验通过| G[生成订单编号]
+    G --> H[计算总金额]
+    H --> I[保存 Order + OrderItem]
+    I --> J[写入 OrderLog]
+    J --> K[返回 201 + 订单详情]
+    K --> L[前端跳转订单详情页]
 ```
-前端 OrderCreatePage
-  → 表单校验
-  → POST /api/orders
-  → OrderController.create()
-  → OrderService.create()  — 生成编号、计算总额、保存
-  → OrderMapper.insert() + OrderItemMapper.insertBatch()
-  → OrderLogMapper.insert(action=CREATE)
-  → 返回 201 + 订单详情
-  → 前端跳转 OrderDetailPage
+
+#### 时序图
+
+```mermaid
+sequenceDiagram
+    actor User as 操作员
+    participant FE as OrderCreatePage
+    participant API as OrderController
+    participant SVC as OrderService
+    participant DB as PostgreSQL
+
+    User->>FE: 填写表单并提交
+    FE->>FE: 前端表单校验
+    FE->>API: POST /api/orders
+    API->>API: @Valid 参数校验
+    API->>SVC: create(dto)
+    SVC->>SVC: 生成编号 ORD-yyyyMMdd-NNN
+    SVC->>SVC: 计算 totalAmount
+    SVC->>DB: INSERT order
+    SVC->>DB: INSERT order_items (batch)
+    SVC->>DB: INSERT order_log (CREATE)
+    DB-->>SVC: OK
+    SVC-->>API: OrderVO
+    API-->>FE: 201 + 订单详情
+    FE-->>User: 跳转 OrderDetailPage
 ```
 
 ### 流程二：订单状态流转
 
-```
-前端 OrderDetailPage
-  → 点击"确认"按钮
-  → PATCH /api/orders/{id}/status { action: CONFIRM }
-  → OrderController.updateStatus()
-  → OrderService.transition()
-    → 校验当前状态 + action 是否合法（状态机）
-    → 更新 status + updated_at
-    → 写入 OrderLog
-  → 返回 200 + 新状态
-  → 前端刷新详情
+#### 流程图
+
+```mermaid
+flowchart TD
+    A[操作员点击状态操作按钮] --> B[PATCH /api/orders/id/status]
+    B --> C{当前状态是否允许此操作?}
+    C -->|不允许| D[返回 409 非法状态转换]
+    D --> E[前端提示"操作冲突"]
+    C -->|允许| F[更新 status + updated_at]
+    F --> G[写入 OrderLog]
+    G --> H[返回 200 + 新状态]
+    H --> I[前端刷新详情页]
 ```
 
-## 6. 错误处理策略
+#### 时序图
+
+```mermaid
+sequenceDiagram
+    actor User as 操作员
+    participant FE as OrderDetailPage
+    participant API as OrderController
+    participant SVC as OrderService
+    participant DB as PostgreSQL
+
+    User->>FE: 点击"确认"按钮
+    FE->>API: PATCH /api/orders/{id}/status {action: CONFIRM}
+    API->>SVC: transition(id, CONFIRM)
+    SVC->>DB: SELECT order WHERE id=?
+    DB-->>SVC: Order(status=PENDING)
+    SVC->>SVC: 状态机校验 PENDING→PROCESSING ✓
+    SVC->>DB: UPDATE order SET status=PROCESSING
+    SVC->>DB: INSERT order_log (CONFIRM)
+    DB-->>SVC: OK
+    SVC-->>API: OrderVO(status=PROCESSING)
+    API-->>FE: 200 + 新状态
+    FE-->>User: 刷新详情页，状态显示"处理中"
+```
+
+## 7. 错误处理策略
 
 ### 后端
 
@@ -214,7 +342,7 @@ PROCESSING → CANCEL   →  CANCELLED
 - 全局拦截（axios interceptor）：401 → 清空 token + 跳转 `/login`；500 → `message.error("服务异常")`
 - 局部处理：表单校验错误 → Ant Design Form 字段级提示；409 → 提示"操作冲突，请刷新重试"
 
-## 7. 工程目录结构
+## 8. 工程目录结构
 
 ```
 project-root/

@@ -201,3 +201,79 @@ public class GlobalExceptionHandler {
 3. **软删除**：使用 `deleted_at` 字段而非物理删除
 4. **索引**：高频查询字段（status、created_by、created_at）建议加索引
 5. **枚举存储**：使用 varchar 存储枚举名，避免数字映射导致可读性差
+
+## Mermaid 图表语法速查
+
+程序设计文档要求使用 Mermaid 绘制以下 4 种图表。
+
+### ER 图
+
+```mermaid
+erDiagram
+    EntityA ||--o{ EntityB : "1:N 关系"
+    EntityA {
+        bigint id PK
+        varchar name
+    }
+    EntityB {
+        bigint id PK
+        bigint entity_a_id FK
+    }
+```
+
+关系符号：`||--||`（1:1）、`||--o{`（1:N）、`}o--o{`（N:N）
+
+### 架构图（graph）
+
+```mermaid
+graph TB
+    subgraph GroupName["分组标题"]
+        A[模块A]
+        B[模块B]
+    end
+    C[(数据库)]
+    A --> B
+    B --> C
+```
+
+方向：`TB`（上→下）、`LR`（左→右）
+
+### 流程图（flowchart）
+
+```mermaid
+flowchart TD
+    A[开始] --> B{条件?}
+    B -->|是| C[步骤1]
+    B -->|否| D[步骤2]
+    C --> E[结束]
+    D --> E
+```
+
+节点形状：`[矩形]`、`{菱形}`、`([圆角])` 、`[(圆柱)]`
+
+### 时序图（sequenceDiagram）
+
+```mermaid
+sequenceDiagram
+    actor U as 用户
+    participant A as 模块A
+    participant B as 模块B
+
+    U->>A: 请求
+    A->>B: 调用
+    B-->>A: 响应
+    A-->>U: 返回
+```
+
+箭头：`->>` 实线请求、`-->>` 虚线响应、`-)` 异步消息
+
+### 状态图（stateDiagram-v2）
+
+```mermaid
+stateDiagram-v2
+    [*] --> State1 : 创建
+    State1 --> State2 : 事件
+    State2 --> [*] : 完成
+```
+
+适用于实体状态机（如订单状态流转）。

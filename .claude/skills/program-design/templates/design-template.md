@@ -82,10 +82,13 @@
 | User | email | varchar(255) | UNIQUE, NOT NULL | |
 | （更多实体...） | | | | |
 
-### 实体关系
+### ER 图（Mermaid）
 
-- User 1 --- N Order
-- （更多关系...）
+```mermaid
+erDiagram
+    User ||--o{ Order : creates
+    （按实际实体关系补全）
+```
 
 ## 4. API 设计（核心接口）
 
@@ -113,19 +116,76 @@
 
 （按核心接口重复以上结构）
 
-## 5. 关键流程
+## 5. 架构总览图（Mermaid）
+
+> 展示前端、后端、数据库等核心模块的整体关系与数据流向。
+
+```mermaid
+graph TB
+    subgraph Frontend
+        UI[页面/组件]
+        Store[状态管理]
+        API_Client[请求层]
+    end
+    subgraph Backend
+        Controller[API 层]
+        Service[业务层]
+        Mapper[数据层]
+    end
+    DB[(数据库)]
+
+    UI --> Store
+    UI --> API_Client
+    API_Client -->|HTTP| Controller
+    Controller --> Service
+    Service --> Mapper
+    Mapper --> DB
+```
+
+（按实际模块替换，可增加缓存、消息队列、第三方服务等节点）
+
+## 6. 关键流程
+
+> 每个核心流程同时提供 **流程图**（决策分支）和 **时序图**（模块间调用）。
 
 ### 流程一：（流程名）
 
-```
-前端 → API 层 → 业务层 → 数据层 → 响应
-            ↓ (异常)
-         错误处理 → 错误响应
+#### 流程图
+
+```mermaid
+flowchart TD
+    A[开始] --> B{条件判断}
+    B -->|条件1| C[处理步骤1]
+    B -->|条件2| D[处理步骤2]
+    C --> E[结束]
+    D --> E
 ```
 
-（或使用文字描述调用时序）
+#### 时序图
 
-## 6. 错误处理策略
+```mermaid
+sequenceDiagram
+    actor User
+    participant FE as 前端
+    participant API as API层
+    participant SVC as 业务层
+    participant DB as 数据库
+
+    User->>FE: 触发操作
+    FE->>API: HTTP 请求
+    API->>SVC: 调用业务方法
+    SVC->>DB: 读写数据
+    DB-->>SVC: 返回结果
+    SVC-->>API: 业务结果
+    API-->>FE: HTTP 响应
+    FE-->>User: 更新界面
+```
+
+### 流程二：（流程名）
+
+（同上结构，按核心流程数量重复）
+
+## 7. 错误处理策略
 
 ### 后端
 
@@ -140,7 +200,7 @@
 - 全局拦截：401 → 跳转登录；500 → 通用错误提示
 - 局部处理：表单校验错误 → 字段级提示
 
-## 7. 工程目录结构
+## 8. 工程目录结构
 
 ```
 项目根目录/
