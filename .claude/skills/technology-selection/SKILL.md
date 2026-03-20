@@ -16,42 +16,92 @@ allowed-tools: Read, Write
 
 本阶段在**主对话中执行**，必须与用户交流，不得自行假定或跳过对话直接产出文档。
 
-1. **先问再写**：先向用户确认开发范围（见下方三选一），得到用户**明确答复**后，再根据选择进入对应模板并生成选型清单。
-2. **可选追问**：若需求文档中有多种技术路线（如前端框架偏好、后端语言），可列出 2～3 个选项请用户选择后再写入文档。
+### 交互原则
 
-## 第一步：确认开发范围
+- **所有决策点都应以结构化选项呈现**，让用户选择而非自由输入。
+- 一次不要问超过 3 个问题，避免信息过载。
+- 每轮问完等用户回复后再进入下一轮，不得一次性抛出全部问题。
+- 允许用户在选项之外补充（选"其他"或"无偏好"后可追加说明）。
 
-**必须先问用户**（三选一）：
+## 结构化提问引导
 
-- **全栈开发**：前端 + 后端 + 数据存储
-- **仅前端开发**：界面与前端逻辑，数据可 mock 或本地
-- **仅后端开发**：API、业务逻辑、数据库，不含界面
+根据需求文档中已确定的开发范围，**按轮次向用户呈现选项**。
 
-根据用户选择，进入对应模板与引导。
+### 第 1 轮：开发范围确认
 
-## 选型引导
+> 若需求文档已明确开发范围，可跳过本轮。
 
-- **全栈**：见 [templates/fullstack.md](templates/fullstack.md)
-- **仅前端**：见 [templates/frontend-only.md](templates/frontend-only.md)
-- **仅后端**：见 [templates/backend-only.md](templates/backend-only.md)
+**Q1 — 开发范围？**
+- A. 全栈开发（前端 + 后端 + 数据存储）
+- B. 仅前端（界面与前端逻辑，数据 mock 或本地）
+- C. 仅后端（API + 数据库，不含界面）
 
-## 第二步：逐项确认选型（需与用户对话）
+根据用户选择，进入对应模板：
+- **A**：见 [templates/fullstack.md](templates/fullstack.md)
+- **B**：见 [templates/frontend-only.md](templates/frontend-only.md)
+- **C**：见 [templates/backend-only.md](templates/backend-only.md)
 
-确认开发范围后，**按模板中的各项逐步与用户确认**，而非一次性假定全部选型：
+### 第 2 轮：前端选型（涉及前端时）
 
-### 涉及前端时，额外需确认：
+**Q2 — 前端框架？**
+- A. React
+- B. Vue
+- C. Next.js
+- D. Nuxt
+- E. Svelte
+- F. 其他（请说明）
 
-- **UI 组件库**：Ant Design / MUI / Element Plus / shadcn/ui / 手写 / 无偏好？
-- **图标库**：Lucide / Heroicons / Ant Icons / FontAwesome / 无偏好？
-- **CSS 方案**：Tailwind / CSS Modules / styled-components / 无偏好？
-- **动画需求**：Framer Motion / GSAP / 不需要动画？
+**Q3 — UI 组件库？**
+- A. Ant Design
+- B. MUI (Material UI)
+- C. Element Plus
+- D. shadcn/ui
+- E. 不使用组件库（手写）
+- F. 无偏好，按框架推荐
 
-### 涉及后端时，额外需确认：
+**Q4 — CSS 方案？**
+- A. Tailwind CSS
+- B. CSS Modules
+- C. styled-components / Emotion
+- D. 组件库自带样式即可
+- E. 无偏好
 
-- **API 文档生成**：Swagger/OpenAPI 自动生成 / 手写 / 暂不需要？
-- **日志框架**：SLF4J+Logback / Winston / Zap / 无偏好？
-- **参数校验**：Hibernate Validator / Joi / Zod / Pydantic / 无偏好？
-- **测试框架**：JUnit / pytest / Jest / 无偏好？
+### 第 3 轮：后端选型（涉及后端时）
+
+**Q5 — 后端语言？**
+- A. Java
+- B. TypeScript (Node.js)
+- C. Go
+- D. Python
+- E. 其他（请说明）
+
+**Q6 — 后端框架？**（根据 Q5 的语言给出对应选项）
+- Java: A. Spring Boot / B. Quarkus
+- TypeScript: A. Express / B. Fastify / C. NestJS
+- Go: A. Gin / B. Echo
+- Python: A. FastAPI / B. Django
+
+**Q7 — 数据库？**
+- A. PostgreSQL
+- B. MySQL
+- C. MongoDB
+- D. SQLite
+- E. 无偏好，你来推荐
+
+### 第 4 轮：补充选型
+
+**Q8 — 测试框架？**（根据已选语言给出对应选项）
+- 前端: A. Vitest / B. Jest / C. 后续再定
+- 后端 Java: A. JUnit 5 / B. 后续再定
+- 后端 TS: A. Jest / B. Vitest / C. 后续再定
+- 后端 Python: A. pytest / B. 后续再定
+
+**Q9 — 包管理器？**（根据已选语言给出对应选项）
+- 前端: A. pnpm / B. yarn / C. npm
+- Java: A. Maven / B. Gradle
+- Python: A. pip / B. poetry
+
+**Q10 — 还有其他技术偏好想补充吗？**（开放式，可回答"没有了"）
 
 ## 执行要点
 
